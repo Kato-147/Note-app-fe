@@ -11,7 +11,7 @@ const AddEditNotes = ({noteData, type, onClose, getAllNotes, showToastMessage}) 
 
   const [error, setError] = useState(null);
 
-  // Handle add notes
+  // Handle add notes api
   const addNewNote = async() => {
     try {
       const response = await axiosInstance.post('/add-note',{title, content, tags});
@@ -27,6 +27,7 @@ const AddEditNotes = ({noteData, type, onClose, getAllNotes, showToastMessage}) 
     }
   };
 
+  // Handle edit notes api
   const editNote = async() => {
 
     const noteId = noteData._id;
@@ -44,6 +45,8 @@ const AddEditNotes = ({noteData, type, onClose, getAllNotes, showToastMessage}) 
       }
     }
   };
+
+  
 
   const handleAddNote =() => {
       if (!title){
