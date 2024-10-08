@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import Navbar from '../../components/Navbar/Navbar';
 import PasswordInput from '../../components/Input/PasswordInput';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { validateEmail } from '../../utils/helper';
+import axiosInstance from '../../utils/AxiosInstance';
 
 const SignUp = () => {
 
@@ -11,7 +12,9 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSignUp = (e) => {
+  const navigate = useNavigate();
+
+  const handleSignUp = async (e) => {
     e.preventDefault();
 
     if (!name) {
@@ -30,7 +33,28 @@ const SignUp = () => {
     }
 
     //SignUp API call
+    try {
+      const respone = await axiosInstance.post('/create-account',
+         {fullName : name, email: email, password: password });
 
+      //Handle successfull login response
+      if (respone.data && respone.data.error) {
+        setError(respone.data.message);
+        return;
+      }
+
+      if (respone.data && respone.data.accessToken){
+        localStorage.setItem('token', respone.data.accessToken);
+       navigate('/dashboard');
+      }
+
+    } catch (error) {
+      if(error.respone && error.respone.data && error.respone.data.message){
+        setError(error.respone.data.message);
+      }else{
+        setError('Đã xảy ra l��i, vui lòng thử lại sau');
+      }
+    }
   }
 
   return (

@@ -6,6 +6,7 @@ import AddEditNotes from './AddEditNotes'
 import Modal from 'react-modal'
 import { useNavigate } from 'react-router-dom'
 import axiosInstance from '../../utils/AxiosInstance'
+import moment from 'moment'
 
 const Home = () => {
 
@@ -16,6 +17,7 @@ const Home = () => {
   })
 
   const [userInfo, setUserInfo] = useState(null);
+  const [allNotes, setAllNotes] = useState([]);
   
   const navigate = useNavigate();
 
@@ -35,8 +37,23 @@ const Home = () => {
     }
   };
 
+  //get all note
+  const getAllNotes = async () => {
+    try {
+      const response = await axiosInstance.get('/get-all-notes');
+      
+      if (response.data && response.data.notes) {
+        setAllNotes(response.data.notes);
+      }
+    } catch (error) {
+      console.log('djt me may loi roi -- get all notes',error);
+      
+    }
+  };
+
   useEffect(()=>{
     getUserInfo();
+    getAllNotes();
     // eslint-disable-next-line
     return () => {
       // cleanup
@@ -51,16 +68,19 @@ const Home = () => {
 
         {/* notes cards */}
         <div className='grid grid-cols-3 gap-4 mt-8'>
+        {allNotes.map((item, index)=>(
           <NoteCard
-            date={'22/2/2222'}
-            title={'cuộc gọi nhỡ lúc giữa đêm'}
-            content={'cuoc goi nho'}
-            tags={'cuoc goi'}
-            isPinned={true}
-            onEdit={() => { }}
-            onDelete={() => { }}
-            onPinNote={() => { }}
-          />
+          key={item._id}
+          date={item.createOn}
+          title={item.title}
+          content={item.content}
+          tags={item.tags}
+          isPinned={item.isPinned}
+          onEdit={() => { }}
+          onDelete={() => { }}
+          onPinNote={() => { }}
+        />
+        ))}
         </div>
 
         {/* button add */}
@@ -97,7 +117,7 @@ const Home = () => {
               type: 'add',
               data: null,
             })
-          }} // today im busy
+          }} 
         />
       </Modal>
 
