@@ -3,7 +3,7 @@ import TagInput from '../../components/Input/TagInput'
 import { MdClose } from 'react-icons/md';
 import axiosInstance from '../../utils/AxiosInstance';
 
-const AddEditNotes = ({noteData, type, onclose, getAllNotes}) => {
+const AddEditNotes = ({noteData, type, onClose, getAllNotes, showToastMessage}) => {
 
   const [title, setTitle] = useState(noteData?.title ||'');
   const [content, setContent] = useState(noteData?.content ||'');
@@ -16,8 +16,9 @@ const AddEditNotes = ({noteData, type, onclose, getAllNotes}) => {
     try {
       const response = await axiosInstance.post('/add-note',{title, content, tags});
       if(response.data && response.data.note){
+        showToastMessage('Note added successfully')
         getAllNotes();
-        onclose();
+        onClose();
       }
     } catch (error) {
       if(error.response && error.response.data && error.response.data.message){
@@ -28,13 +29,14 @@ const AddEditNotes = ({noteData, type, onclose, getAllNotes}) => {
 
   const editNote = async() => {
 
-    const noteId = noteData._id();
+    const noteId = noteData._id;
 
     try {
-      const response = await axiosInstance.PUS('/edit-note' + noteId,{title, content, tags});
+      const response = await axiosInstance.put('/edit-note/' + noteId,{title, content, tags});
       if(response.data && response.data.note){
+        showToastMessage('Note updated successfully')
         getAllNotes();
-        onclose();
+        onClose();
       }
     } catch (error) {
       if(error.response && error.response.data && error.response.data.message){
@@ -68,7 +70,7 @@ const AddEditNotes = ({noteData, type, onclose, getAllNotes}) => {
 
       <button 
       className='w-10 h-10 flex rounded-full items-center justify-center absolute -top-3 -right-3 hover:bg-slate-50'
-      onClick={onclose}
+      onClick={onClose}
       >
         <MdClose className='text-xl text-slate-400'/>
       </button>
