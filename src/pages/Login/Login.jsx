@@ -7,8 +7,8 @@ import axiosInstance from '../../utils/AxiosInstance'
 
 const Login = () => {
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('test1@gmail.com');
+  const [password, setPassword] = useState('1234');
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
@@ -29,7 +29,8 @@ const Login = () => {
 
     // Login API call
     try {
-      const respone = await axiosInstance.post('/login', { email: email, password: password });
+      const respone = await axiosInstance.post('/login',
+         { email: email, password: password });
 
       //Handle successfull login response
       if (respone.data && respone.data.accessToken) {
