@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import Navbar from '../../components/Navbar/Navbar'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import PasswordInput from '../../components/Input/PasswordInput'
 import { validateEmail } from '../../utils/helper'
+import axiosInstance from '../../utils/AxiosInstance'
 
 const Login = () => {
 
@@ -10,21 +11,38 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
-  const handleLogin = async(e) => {
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    if(!validateEmail(email)) {
+    if (!validateEmail(email)) {
       setError('Làm ơn nhập Email hợp lệ');
       return;
     }
 
-   if(!password) {
-     setError('Làm ơn nhập mật khẩu');
-     return;
-   }
+    if (!password) {
+      setError('Làm ơn nhập mật khẩu');
+      return;
+    }
     setError('');
-    
-    // API call to authenticate user
+
+    // Login API call
+    try {
+      const respone = await axiosInstance.post('/login', { email: email, password: password });
+
+      //Handle successfull login response
+      if (respone.data && respone.data.accessToken) {
+        localStorage.setItem('token', respone.data.accessToken);
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      if(error.respone && error.respone.data && error.respone.data.message){
+        setError(error.respone.data.message);
+      }else{
+        setError('Đã xảy ra l��i, vui lòng thử lại sau');
+      }
+    }
   };
 
   return (
@@ -46,8 +64,8 @@ const Login = () => {
 
             {/* call componet input passwor */}
             <PasswordInput
-            value={password}
-            onChange={(e)=> setPassword(e.target.value)} />
+              value={password}
+              onChange={(e) => setPassword(e.target.value)} />
 
             {/* error */}
             {error && <p className='text-red-500 text-xs pb-1'>{error}</p>}
