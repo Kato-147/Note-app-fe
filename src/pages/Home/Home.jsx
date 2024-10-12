@@ -5,10 +5,11 @@ import { MdAdd } from 'react-icons/md'
 import AddEditNotes from './AddEditNotes'
 import Modal from 'react-modal'
 import { useNavigate } from 'react-router-dom'
-import axiosInstance from '../../utils/AxiosInstance'
+import axiosInstance from '../../utils/axiosInstance'
 import Toast from '../../components/ToastMessage/Toast'
 import EmptyCard from '../../components/EmptyCard/EmptyCard'
 import add_notes from '../../assets/images/add-note.svg'
+import search_off from '../../assets/images/search_off.svg';
 
 
 const Home = () => {
@@ -23,6 +24,8 @@ const Home = () => {
 
   const [userInfo, setUserInfo] = useState(null);
   const [allNotes, setAllNotes] = useState([]);
+
+  const [isSearch, setIsSearch] = useState(false);
 
   const navigate = useNavigate();
 
@@ -91,6 +94,44 @@ const Home = () => {
     }
   }
 
+  //search for a note
+  const onSearchNote = async (query) => {
+    try {
+      const respone = await axiosInstance.get('/search-notes', {params: {query}})
+
+      if (respone.data && respone.data.notes) {
+        setAllNotes(respone.data.notes);
+        setIsSearch(true);
+      }
+
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
+  // clear search
+  const handleClearSearch = () =>{
+    setIsSearch(false);
+    getAllNotes();
+  }
+
+  // update pin notes
+  const updateIsPinned = async (noteData) => {
+    const noteId = noteData._id;
+
+    try {
+      const response = await axiosInstance.put('/update-note-pinned/' + noteId,{'isPinned': !noteData.isPinned});
+      if(response.data && response.data.note){
+        showToastMessage('Note updated successfully')
+        getAllNotes();
+      }
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
   useEffect(() => {
     getUserInfo();
     getAllNotes();
@@ -102,7 +143,7 @@ const Home = () => {
 
   return (
     <>
-      <Navbar userInfo={userInfo} />
+      <Navbar userInfo={userInfo} onSearchNote={onSearchNote} handleClearSearch={handleClearSearch} />
 
       <div className='container mx-auto'>
 
@@ -118,10 +159,12 @@ const Home = () => {
               isPinned={item.isPinned}
               onEdit={() => handleEdit(item)}
               onDelete={() => deleteNote(item)}
-              onPinNote={() => { }}
+              onPinNote={() => updateIsPinned(item)}
             />
           ))}
-        </div>) : (<EmptyCard imgSrc={add_notes} message={`Start creating your first note! Click the 'Add' button to jot down your thoughts, ideas, and reminders. Let's get started.`} />)}  
+        </div>) : (<EmptyCard
+         imgSrc={isSearch ? search_off : add_notes} 
+         message={isSearch ? `No notes found mathching yours search` : `Start creating your first note! Click the 'Add' button to jot down your thoughts, ideas, and reminders. Let's get started.`} />)}  
 
         {/* button add */}
         <button className='w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10'

@@ -3,7 +3,8 @@ import ProfileInfo from '../Cards/ProfileInfo'
 import { useNavigate } from 'react-router-dom'
 import SearchBar from '../SearchBar/SearchBar';
 
-const Navbar = ({userInfo}) => {
+
+const Navbar = ({ userInfo, onSearchNote ,handleClearSearch}) => {
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -14,11 +15,15 @@ const Navbar = ({userInfo}) => {
     navigate('/login');
   }
 
-  const handleSearch = () => { };
+  const handleSearch = () => {
+    if (searchQuery) {
+      onSearchNote(searchQuery);
+    }
+  };
 
   const onClearSearch = () => {
     setSearchQuery('');
-    //handleSearch();
+    handleClearSearch()
   };
 
   return (
@@ -28,7 +33,7 @@ const Navbar = ({userInfo}) => {
       {/* call search bar component */}
       <SearchBar
         value={searchQuery}
-        onChange={(target) => { setSearchQuery(target.value) }}
+        onChange={(event) => setSearchQuery(event.target.value)} // Sử dụng event để lấy giá trị của input
         handleSearch={handleSearch}
         onClearSearch={onClearSearch}
       />
