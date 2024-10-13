@@ -3,7 +3,8 @@ import Navbar from '../../components/Navbar/Navbar'
 import { Link, useNavigate } from 'react-router-dom'
 import PasswordInput from '../../components/Input/PasswordInput'
 import { validateEmail } from '../../utils/helper'
-import axiosInstance from '../../utils/AxiosInstance'
+import axiosInstance from '../../utils/axiosInstance'
+import { Button } from '@/components/ui/button'
 
 const Login = () => {
 
@@ -54,7 +55,7 @@ const Login = () => {
       <div className='flex items-center justify-center mt-28'>
         <div className='w-96 border rounded bg-white px-7 py-10'>
           <form onSubmit={handleLogin}>
-            <h4 className='text-2xl mb-7'>Đăng nhập</h4>
+            <h4 className='text-2xl mb-7 font-medium'>Đăng nhập</h4>
 
             <input
               type="text"
@@ -71,7 +72,7 @@ const Login = () => {
             {/* error */}
             {error && <p className='text-red-500 text-xs pb-1'>{error}</p>}
 
-            <button type='submit' className='btn-primary'>Đăng nhập</button>
+            <Button type='submit' className='btn-primary'>Đăng nhập</Button>
 
             {/* Go to signup page */}
             <p className='text-sm text-center mt-4'>

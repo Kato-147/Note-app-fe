@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6'
+import { Input } from '../ui/input';
 
 const PasswordInput = ({ value, onChange, placeholder }) => {
 
@@ -12,10 +13,10 @@ const PasswordInput = ({ value, onChange, placeholder }) => {
     }
 
     return (
-        <div className='flex items-center bg-transparent border-[1.5px] px-5 mb-3 rounded'>
+        <div className='flex items-center bg-transparent mb-3 rounded'>
 
             {/* Input text */}
-            <input
+            <Input
                 type={isShowPassword ? 'text' : 'password'}
                 value={value}
                 onChange={onChange}
